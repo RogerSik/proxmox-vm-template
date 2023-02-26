@@ -13,9 +13,9 @@ if [ ! -f "ssh-keys.pub" ]; then
   exit
 fi
 
-echo "VM ID"
+echo "Enter VM ID"
 read -r VM_ID
-echo "VM Name?"
+echo "Enter VM Name"
 read -r VM_NAME
 
 echo "Image download"
