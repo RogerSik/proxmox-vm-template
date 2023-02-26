@@ -27,7 +27,7 @@ virt-customize -a "$LAST_LTS_RELEASE-server-cloudimg-amd64.img" --install qemu-g
 
 echo "Create Proxmox VM image from Ubuntu Cloud Image"
 qm create "$VM_ID" --memory 1024 --balloon 0 --cores 2 --net0 virtio,bridge=vmbr0 --scsihw virtio-scsi-pci
-qm set "$VM_ID" --scsi0 local-lvm:0,import-from="$LAST_LTS_RELEASE-server-cloudimg-amd64.img"
+qm set "$VM_ID" --scsi0 local-lvm:0,import-from="$PWD/$LAST_LTS_RELEASE-server-cloudimg-amd64.img"
 qm set "$VM_ID" --agent enabled=1,fstrim_cloned_disks=1
 
 echo "Create Cloud-Init Disk and configure boot"
