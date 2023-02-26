@@ -19,7 +19,7 @@ echo "VM Name?"
 read -r VM_NAME
 
 echo "Image download"
-wget https://cloud-images.ubuntu.com/"$LAST_LTS_RELEASE"/current/"$LAST_LTS_RELEASE-server-cloudimg-amd64.img"
+wget "https://cloud-images.ubuntu.com/$LAST_LTS_RELEASE/current/$LAST_LTS_RELEASE-server-cloudimg-amd64.img"
 apt install libguestfs-tools -y
 
 echo "Install qemu-guest-agent on Ubuntu image"
