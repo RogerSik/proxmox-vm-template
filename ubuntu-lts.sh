@@ -4,12 +4,24 @@ DIR=$(
   pwd
 )
 
-mapfile -t LTS_RELEASES < <(curl -s https://changelogs.ubuntu.com/meta-release-lts | grep "^Dist:" | awk '{print $2}')
+mapfile -t LTS_ENTRIES < <(
+  curl -s https://changelogs.ubuntu.com/meta-release-lts | awk '
+    /^Dist:/    { dist=$2 }
+    /^Version:/ { ver=$2; print dist " " ver }
+  ' | tail -4 | tac
+)
 
-if [ ${#LTS_RELEASES[@]} -eq 0 ]; then
+if [ ${#LTS_ENTRIES[@]} -eq 0 ]; then
   echo "Error: Could not fetch LTS release list from Ubuntu"
   exit 1
 fi
+
+LTS_RELEASES=()
+LTS_VERSIONS=()
+for entry in "${LTS_ENTRIES[@]}"; do
+  LTS_RELEASES+=("${entry%% *}")
+  LTS_VERSIONS+=("${entry##* }")
+done
 
 LAST_LTS_RELEASE="${LTS_RELEASES[-1]}"
 
@@ -21,22 +33,26 @@ if [ -n "$1" ]; then
   done
   if [ "$VALID" -eq 0 ]; then
     echo "Error: '$SELECTED_RELEASE' is not a valid LTS release."
-    echo "Available: ${LTS_RELEASES[*]}"
+    printf "Available: "
+    for i in "${!LTS_RELEASES[@]}"; do
+      printf "%s (%s)  " "${LTS_RELEASES[$i]}" "${LTS_VERSIONS[$i]}"
+    done
+    echo ""
     exit 1
   fi
 else
   echo ""
   echo "Available Ubuntu LTS versions:"
   for i in "${!LTS_RELEASES[@]}"; do
-    if [ "${LTS_RELEASES[$i]}" = "$SELECTED_RELEASE" ]; then
-      echo "  $((i+1))) ${LTS_RELEASES[$i]} (latest)"
+    if [ "${LTS_RELEASES[$i]}" = "$LAST_LTS_RELEASE" ]; then
+      echo "  $((i+1))) ${LTS_VERSIONS[$i]} (${LTS_RELEASES[$i]}) (latest)"
     else
-      echo "  $((i+1))) ${LTS_RELEASES[$i]}"
+      echo "  $((i+1))) ${LTS_VERSIONS[$i]} (${LTS_RELEASES[$i]})"
     fi
   done
   echo ""
-  read -rp "Select version [1-${#LTS_RELEASES[@]}, default: ${#LTS_RELEASES[@]}]: " SELECTION
-  SELECTION="${SELECTION:-${#LTS_RELEASES[@]}}"
+  read -rp "Select version [1-${#LTS_RELEASES[@]}, default: 1]: " SELECTION
+  SELECTION="${SELECTION:-1}"
   if ! [[ "$SELECTION" =~ ^[0-9]+$ ]] || [ "$SELECTION" -lt 1 ] || [ "$SELECTION" -gt "${#LTS_RELEASES[@]}" ]; then
     echo "Error: Invalid selection"
     exit 1
