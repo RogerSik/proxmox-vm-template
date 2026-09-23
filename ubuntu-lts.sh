@@ -94,7 +94,7 @@ virt-customize -a "/tmp/$SELECTED_RELEASE-server-cloudimg-amd64.modified.img" --
 
 echo "Create Proxmox VM image from Ubuntu Cloud Image"
 qm create "$VM_ID" --memory 1024 --balloon 0 --cores 2 --net0 virtio,bridge=vmbr0 --scsihw virtio-scsi-pci --hotplug disk,network,usb,memory --numa 1
-qm set "$VM_ID" --scsi0 local-lvm:0,import-from="/tmp/$SELECTED_RELEASE-server-cloudimg-amd64.modified.img"
+qm set "$VM_ID" --scsi0 local-lvm:0,import-from="/tmp/$SELECTED_RELEASE-server-cloudimg-amd64.modified.img",discard=on,ssd=1
 qm set "$VM_ID" --agent enabled=1,fstrim_cloned_disks=1
 
 echo "Create Cloud-Init Disk and configure boot"
