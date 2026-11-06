@@ -40,4 +40,4 @@ First tagged release.
 - Missing root or `ssh-keys.pub` exited with status 0
 - VS Code file association for `ssh-keys.pub`
 
-[1.0.0]: https://github.com/RogerSik/proxmox-vm-template/releases/tag/v1.0.0
+[1.0.0]: https://github.com/RogerSik/proxmox-vm-template/releases/tag/1.0.0
